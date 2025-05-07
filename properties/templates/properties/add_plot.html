@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Plot</title>
+    <script>
+        function fetchDistricts(stateId) {
+            fetch(`/get-districts/${stateId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    const districtSelect = document.getElementById("district");
+                    districtSelect.innerHTML = '<option value="">--Select District--</option>';
+                    data.forEach(district => {
+                        const option = document.createElement("option");
+                        option.value = district.id;
+                        option.textContent = district.name;
+                        districtSelect.appendChild(option);
+                    });
+                    document.getElementById("taluk").innerHTML = '<option value="">--Select Taluk--</option>';
+                    document.getElementById("revenue_village").innerHTML = '<option value="">--Select Revenue Village--</option>';
+                });
+        }
+
+        function fetchTaluks(districtId) {
+            fetch(`/get-taluks/${districtId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    const talukSelect = document.getElementById("taluk");
+                    talukSelect.innerHTML = '<option value="">--Select Taluk--</option>';
+                    data.forEach(taluk => {
+                        const option = document.createElement("option");
+                        option.value = taluk.id;
+                        option.textContent = taluk.name;
+                        talukSelect.appendChild(option);
+                    });
+                    document.getElementById("revenue_village").innerHTML = '<option value="">--Select Revenue Village--</option>';
+                });
+        }
+
+        function fetchRevenueVillages(talukId) {
+            fetch(`/get-revenue-villages/${talukId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    const villageSelect = document.getElementById("revenue_village");
+                    villageSelect.innerHTML = '<option value="">--Select Revenue Village--</option>';
+                    data.forEach(village => {
+                        const option = document.createElement("option");
+                        option.value = village.id;
+                        option.textContent = village.name;
+                        villageSelect.appendChild(option);
+                    });
+                });
+        }
+    </script>
+</head>
+<body>
+    <h1>Add Plot</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <label for="state">Select State:</label>
+        <select name="state" id="state" onchange="fetchDistricts(this.value)">
+            <option value="">--Select State--</option>
+            {% for state in states %}
+                <option value="{{ state.id }}">{{ state.name }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+
+        <label for="district">Select District:</label>
+        <select name="district" id="district" onchange="fetchTaluks(this.value)">
+            <option value="">--Select District--</option>
+        </select>
+        <br><br>
+
+        <label for="taluk">Select Taluk:</label>
+        <select name="taluk" id="taluk" onchange="fetchRevenueVillages(this.value)">
+            <option value="">--Select Taluk--</option>
+        </select>
+        <br><br>
+
+        <label for="revenue_village">Select Revenue Village:</label>
+        <select name="revenue_village" id="revenue_village">
+            <option value="">--Select Revenue Village--</option>
+        </select>
+        <br><br>
+
+        <label for="owner">Owner of the Land:</label>
+        <input type="text" name="owner" id="owner">
+        <br><br>
+
+        <label for="survey_no">Survey Number:</label>
+        <input type="text" name="survey_no" id="survey_no">
+        <br><br>
+
+        <label for="sub_division">Sub Division:</label>
+        <input type="text" name="subdivision" id="sub_division">
+        <br><br>
+
+        <label for="plot_number">Plot Number:</label>
+        <input type="text" name="plot_number" id="plot_number">
+        <br><br>
+
+        <label for="dimensions">Dimensions:</label>
+        <input type="text" name="dimensions" id="dimensions">
+        <br><br>
+
+        <label for="facing">Facing:</label>
+        <select name="facing" id="facing">
+            <option value="">--Select Facing--</option>
+            <option value="North">North</option>
+            <option value="South">South</option>
+            <option value="East">East</option>
+            <option value="West">West</option>
+        </select>
+        <br><br>
+
+        <label for="pricing_range">Pricing Range:</label>
+        <input type="number" step="0.01" name="pricing_range" id="pricing_range">
+        <br><br>
+        <label for="land_image">Upload Plot Image:</label>
+        <input type="file" name="land_image" id="land_image" accept="image/*">
+        <br><br>
+        <button type="submit">Add Plot</button>
+    </form>
+</body>
+</html>

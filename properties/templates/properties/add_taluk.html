@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Taluk</title>
+    <script>
+        // Dynamically update districts based on the selected state
+        function fetchDistricts(stateId) {
+            fetch(`/get-districts/${stateId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    const districtSelect = document.getElementById("district");
+                    districtSelect.innerHTML = '<option value="">--Select District--</option>';
+                    data.forEach(district => {
+                        const option = document.createElement("option");
+                        option.value = district.id;
+                        option.textContent = district.name;
+                        districtSelect.appendChild(option);
+                    });
+                });
+        }
+    </script>
+</head>
+<body>
+    <h1>Add Taluk</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <label for="state">Select State:</label>
+        <select name="state" id="state" onchange="fetchDistricts(this.value)">
+            <option value="">--Select State--</option>
+            {% for state in states %}
+                <option value="{{ state.id }}">{{ state.name }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+
+        <label for="district">Select District:</label>
+        <select name="district" id="district">
+            <option value="">--Select District--</option>
+        </select>
+        <br><br>
+
+        <label for="taluk">Taluk Name:</label>
+        <input type="text" name="taluk" id="taluk">
+        <br><br>
+
+        <button type="submit">Add Taluk</button>
+    </form>
+</body>
+</html>

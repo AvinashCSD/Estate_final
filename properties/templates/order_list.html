@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Order Details</title>
+</head>
+<body>
+    <h1>Order Details (Order ID: {{ order.id }})</h1>
+    <p><strong>Total Price:</strong> Rs.{{ order.total_price }}</p>
+    <p><strong>Created At:</strong> {{ order.created_at }}</p>
+
+    <h2>Items in this Order:</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Plot</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order_items %}
+                <tr>
+                    <td>{{ item.plot.plot_number }}</td>
+                    <td>Rs.{{ item.price }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="2">No items in this order.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{% url 'my_orders' %}">Back to My Orders</a>
+</body>
+</html>

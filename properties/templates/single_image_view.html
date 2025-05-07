@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}User Dashboard{% endblock %}
+
+{% block content %}
+
+<!-- Filter Modal -->
+<div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filterModalLabel">Filter Plots</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="GET" action="{% url 'user_dashboard' %}">
+                <div class="modal-body">
+                    <!-- Min Range Filter -->
+                    <div class="mb-3">
+                        <label for="price_range_min" class="form-label">Min Price</label>
+                        <select id="price_range_min" name="price_range_min" class="form-select">
+                            <!-- Options here -->
+                        </select>
+                    </div>
+            
+                    <!-- Max Range Filter -->
+                    <div class="mb-3">
+                        <label for="price_range_max" class="form-label">Max Price</label>
+                        <select id="price_range_max" name="price_range_max" class="form-select">
+                            <!-- Options here -->
+                        </select>
+                    </div>
+            
+                    <!-- Facing Filter -->
+                    <div class="mb-3">
+                        <label for="facing" class="form-label">Facing</label>
+                        <select id="facing" name="facing" class="form-select">
+                            <!-- Options here -->
+                        </select>
+                    </div>
+            
+                    <!-- Dimensions Filter -->
+                    <div class="mb-3">
+                        <label for="dimensions" class="form-label">Dimensions</label>
+                        <input type="text" id="dimensions" name="dimensions" class="form-control" value="{{ dimensions }}">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Apply Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Plots List Section -->
+<section id="plots-list">
+    <h3>Plots Image View</h3>
+    <div class="row">
+        {% for plot in row %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+
+                <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+
+                    <a-scene>
+                        <!-- Add 360-degree image -->
+                        <a-sky src="{{ plot.land_image.url }}"></a-sky>
+
+                        <!-- VR Camera -->
+                        <a-camera position="0 1.6 0">
+                            <a-cursor color="red"></a-cursor>
+                        </a-camera>
+                    </a-scene>
+
+
+               
+               
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <p class="text-center">No plots match the selected filters.</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+
+
+{% endblock %}

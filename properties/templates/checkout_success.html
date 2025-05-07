@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout Successful{% endblock %}
+
+{% block content %}
+<div class="card shadow-lg p-4">
+    <div class="card-header bg-success text-white text-center">
+        <h2>🎉 Checkout Successful!</h2>
+    </div>
+    <div class="card-body text-center">
+        <p class="lead text-muted">Your order has been placed successfully. Thank you for your purchase!</p>
+        <p class="fs-5">We appreciate your business and hope you enjoy your new items.</p>
+        <hr class="my-4">
+        <a href="{% url 'my_orders' %}" class="btn btn-primary btn-lg">View My Orders</a>
+        <a href="{% url 'user_dashboard' %}" class="btn btn-outline-secondary btn-lg mt-2">Continue Shopping</a>
+    </div>
+</div>

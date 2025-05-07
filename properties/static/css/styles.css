@@ -1,0 +1,100 @@
+/* Custom CSS to add styles for better UI */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7fc;
+    margin: 0;
+    padding: 0;
+}
+
+/* Sidebar styling */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 250px;
+    background-color: #343a40;
+    padding-top: 20px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    z-index: 999;
+}
+
+.sidebar .nav-link {
+    color: #ddd;
+    padding: 15px;
+    font-size: 1.1rem;
+}
+
+.sidebar .nav-link:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.sidebar .nav-link.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.sidebar .nav-item {
+    margin-bottom: 10px;
+}
+
+/* Header Styling */
+header {
+    z-index: 1000;
+}
+
+header h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+/* Main Content */
+main {
+    margin-left: 250px;
+    padding-top: 60px;
+}
+
+/* Footer Styling */
+footer {
+    position:fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: #f8f9fa;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+}
+
+/* Adjust margins for page content */
+.container-fluid {
+    margin-left: 250px;
+}
+
+.user-profile span {
+    font-size: 1.1rem;
+    color: #555;
+}
+
+/* Logo Styling */
+.logo img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Responsiveness */
+@media (max-width: 991px) {
+    header {
+        margin-left: 0;
+    }
+
+    .sidebar {
+        position: relative;
+        height: auto;
+        width: 100%;
+    }
+
+    main {
+        margin-left: 0;
+    }
+}

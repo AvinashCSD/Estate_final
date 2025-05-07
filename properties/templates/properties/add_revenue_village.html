@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Revenue Village</title>
+    <script>
+        // Dynamically fetch districts based on the selected state
+        function fetchDistricts(stateId) {
+            fetch(`/get-districts/${stateId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    const districtSelect = document.getElementById("district");
+                    districtSelect.innerHTML = '<option value="">--Select District--</option>';
+                    data.forEach(district => {
+                        const option = document.createElement("option");
+                        option.value = district.id;
+                        option.textContent = district.name;
+                        districtSelect.appendChild(option);
+                    });
+                    document.getElementById("taluk").innerHTML = '<option value="">--Select Taluk--</option>';
+                });
+        }
+
+        // Dynamically fetch taluks based on the selected district
+        function fetchTaluks(districtId) {
+            fetch(`/get-taluks/${districtId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    const talukSelect = document.getElementById("taluk");
+                    talukSelect.innerHTML = '<option value="">--Select Taluk--</option>';
+                    data.forEach(taluk => {
+                        const option = document.createElement("option");
+                        option.value = taluk.id;
+                        option.textContent = taluk.name;
+                        talukSelect.appendChild(option);
+                    });
+                });
+        }
+    </script>
+</head>
+<body>
+    <h1>Add Revenue Village</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <label for="state">Select State:</label>
+        <select name="state" id="state" onchange="fetchDistricts(this.value)">
+            <option value="">--Select State--</option>
+            {% for state in states %}
+                <option value="{{ state.id }}">{{ state.name }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+
+        <label for="district">Select District:</label>
+        <select name="district" id="district" onchange="fetchTaluks(this.value)">
+            <option value="">--Select District--</option>
+        </select>
+        <br><br>
+
+        <label for="taluk">Select Taluk:</label>
+        <select name="taluk" id="taluk">
+            <option value="">--Select Taluk--</option>
+        </select>
+        <br><br>
+
+        <label for="village">Village Name:</label>
+        <input type="text" name="village" id="village">
+        <br><br>
+
+        <button type="submit">Add Revenue Village</button>
+    </form>
+</body>
+</html>

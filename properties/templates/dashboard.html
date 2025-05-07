@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+
+{% block title %}User Dashboard{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<header class="d-flex justify-content-between align-items-center w-50 py-4">
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#filterModal">Filter Plots</button>
+</header>
+
+<!-- Filter Modal -->
+<div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filterModalLabel">Filter Plots</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="GET" action="{% url 'user_dashboard' %}">
+                <div class="modal-body">
+                    <!-- Min Range Filter -->
+                    <div class="mb-3">
+                        <label for="price_range_min" class="form-label">Min Price</label>
+                        <select id="price_range_min" name="price_range_min" class="form-select">
+                            <!-- Options here -->
+                        </select>
+                    </div>
+            
+                    <!-- Max Range Filter -->
+                    <div class="mb-3">
+                        <label for="price_range_max" class="form-label">Max Price</label>
+                        <select id="price_range_max" name="price_range_max" class="form-select">
+                            <!-- Options here -->
+                        </select>
+                    </div>
+            
+                    <!-- Facing Filter -->
+                    <div class="mb-3">
+                        <label for="facing" class="form-label">Facing</label>
+                        <select id="facing" name="facing" class="form-select">
+                            <!-- Options here -->
+                        </select>
+                    </div>
+            
+                    <!-- Dimensions Filter -->
+                    <div class="mb-3">
+                        <label for="dimensions" class="form-label">Dimensions</label>
+                        <input type="text" id="dimensions" name="dimensions" class="form-control" value="{{ dimensions }}">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Apply Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Plots List Section -->
+<section id="plots-list">
+    <h3>Plots within the price range</h3>
+    <div class="row">
+        {% for plot in plots %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <a href="{% url 'single_image_view' pk=plot.id %}"><img src="{{ plot.land_image.url }}" 
+                     alt="Plot Image" 
+                     class="card-img-top rotate-image" 
+                     style="max-height: 200px; object-fit: cover; cursor: pointer;"
+                     ></a>
+                <div class="card-body">
+                    <h5 class="card-title"><strong>Plot Number:</strong>{{ plot.plot_number }}</h5>
+                    <p><strong>Dimensions:</strong> {{ plot.dimensions }}</p>
+                    <p><strong>Price Range Per Cent:</strong>Rs.{{ plot.price_range }}</p>
+                    <p><strong>Facing:</strong> {{ plot.facing }}</p>
+                    <div class="form-group">
+                        <label for="interest-{{ plot.id }}">Interested?</label><br>
+                        <input type="radio" id="interested-{{ plot.id }}" name="interest-{{ plot.id }}" value="interested"> Interested
+                        <input type="radio" id="not-interested-{{ plot.id }}" name="interest-{{ plot.id }}" value="not-interested"> Not Interested
+                    </div>
+                    <button class="btn btn-primary add-to-cart-btn" data-plot-id="{{ plot.id }}">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <p class="text-center">No plots match the selected filters.</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<style>
+.image-container {
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #000;
+}
+
+#viewerImage {
+    max-height: 70vh;
+    transition: transform 0.3s ease;
+}
+
+.form-range {
+    background-color: rgb(47, 47, 49);
+}
+
+.rotation-controls {
+    z-index: 1050;
+}
+
+.plot-thumbnail:hover {
+    transform: scale(1.05);
+    transition: transform 0.2s ease;
+}
+
+.modal-content.bg-dark {
+    background-color: rgba(0, 0, 0, 0.9) !important;
+}
+
+/* Add the rotation animation for image */
+.rotate-image {
+    transition: transform 1s ease;
+}
+
+/* Keyframes for rotating 360 degrees */
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(90deg);
+    }
+    50% {
+        transform: rotate(180deg);
+    }
+    75% {
+        transform: rotate(270deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+</style>
+
+<script>
+// Start rotating on hover
+function startRotation(element) {
+    element.style.animation = 'rotate 12s infinite linear';
+}
+
+// Stop rotating when mouse leaves
+function stopRotation(element) {
+    element.style.animation = 'none';
+}
+
+// Handling Add to Cart button click
+document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+    button.addEventListener('click', function () {
+        const plotId = this.getAttribute('data-plot-id');
+        fetch(`/add-to-cart/${plotId}/`, {
+            method: 'POST',  // Ensure the method is POST
+            headers: {
+                'X-CSRFToken': getCSRFToken(),
+            },
+            body: JSON.stringify({ plot_id: plotId })  // Optional, depending on your need
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.success);  // Show success message
+            } else {
+                alert(data.error);  // Show error message
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+});
+
+function getCSRFToken() {
+    const cookieValue = document.cookie.match('(^|;)\\s*csrftoken\\s*=\\s*([^;]+)');
+    return cookieValue ? cookieValue.pop() : '';
+}
+</script>
+
+{% endblock %}
